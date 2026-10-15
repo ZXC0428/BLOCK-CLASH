@@ -1,7 +1,6 @@
 # BLOCK CLASH
 
 BLOCK CLASH 是一款以瀏覽器執行的方塊對戰遊戲，支援單人闖關、限時挑戰、無盡模式與雙人競技對戰。
-
 玩家可以透過消除方塊行數取得分數與攻擊行，並使用 HOLD、連擊與垃圾行機制挑戰關卡或擊敗對手。
 
 ## 專案資訊
@@ -141,45 +140,3 @@ http://localhost:3000
 │   └── multiplayer-competition.browser.test.js
 └── block-clash.sqlite
 ```
-
-## 測試
-
-目前包含雙人對戰功能的自動化測試：
-
-```bash
-node --test tests/multiplayer-competition.test.js
-```
-
-瀏覽器測試需要 Playwright 與可用的 Chromium 或 Chrome 瀏覽器：
-
-```bash
-node --test tests/multiplayer-competition.browser.test.js
-```
-
-## GitHub Pages 注意事項
-
-目前完整版本需要 `server.js` 提供：
-
-- SQLite 資料保存
-- 單人進度 API
-- 排行榜 API
-- 玩家資料 API
-
-GitHub Pages 只能提供靜態檔案，無法執行 Node.js 伺服器或 SQLite。因此：
-
-- GitHub Pages 可以展示靜態介面
-- 但無法使用完整的進度保存與排行榜功能
-- 完整遊戲建議使用 Node.js 伺服器啟動
-- 若要部署到網路上，需要使用支援 Node.js 後端的服務
-
-## 開發方向
-
-- 增加更多單人關卡與特殊障礙
-- 強化排行榜與玩家資料管理
-- 增加線上多人對戰
-- 完善雲端進度同步
-- 補充完整的瀏覽器自動化測試
-
-## 授權
-
-目前尚未設定正式授權條款。
