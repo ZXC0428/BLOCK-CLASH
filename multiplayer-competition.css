@@ -1,0 +1,224 @@
+.competition-countdown {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: radial-gradient(circle, #172963e8 0, #050817f5 66%);
+  backdrop-filter: blur(5px);
+}
+
+.competition-countdown small {
+  color: #9eacd2;
+  font: 800 14px 'Noto Sans TC', sans-serif;
+  letter-spacing: 4px;
+}
+
+.competition-countdown strong {
+  min-width: 280px;
+  color: #fff;
+  font: 132px/1 'Black Ops One', sans-serif;
+  text-shadow: 0 0 18px #42e9ff, 8px 8px 0 #ff4fb6;
+  animation: competition-countdown-pop .75s ease-out;
+}
+
+.competition-countdown.pulse strong {
+  animation: competition-countdown-pop .75s ease-out;
+}
+
+.competition-records-bar,
+.competition-records {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.competition-records-bar {
+  max-width: 620px;
+  margin: 4px auto 10px;
+  padding: 6px 10px;
+  border: 1px solid #2b3c72;
+  border-radius: 8px;
+  background: #0b1230;
+  justify-content: space-between;
+}
+
+.competition-records-bar > small {
+  color: var(--cyan);
+  font: 9px monospace;
+  letter-spacing: 2px;
+}
+
+.competition-records {
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.competition-records b {
+  color: #fff;
+}
+
+.competition-records button {
+  padding: 5px 9px;
+  font-size: 11px;
+}
+
+.competition-summary {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--pink);
+  background: #070d22;
+}
+
+.competition-summary.hidden {
+  display: none;
+}
+
+.competition-summary h3,
+.competition-summary p {
+  margin: 2px 0;
+}
+
+.competition-summary h3 {
+  color: #fff;
+  font-size: 17px;
+}
+
+.competition-summary p,
+.competition-summary small {
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.player-card {
+  position: relative;
+}
+
+.competition-feedback-rail {
+  display: flex;
+  min-height: 34px;
+  min-width: 150px;
+  margin: 5px 12px;
+  padding: 8px 12px;
+  border: 2px solid #fff;
+  border-radius: 7px;
+  color: #fff;
+  background: #07102ee8;
+  font: 22px 'Black Ops One', sans-serif;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px) scale(.96);
+}
+
+.competition-feedback-rail.show {
+  animation: competition-toast .85s ease-out;
+}
+
+.competition-feedback-rail.attack { color: #ffe36b; border-color: #ffe36b; }
+.competition-feedback-rail.received,
+.competition-feedback-rail.garbage { color: #ff7298; border-color: #ff4f80; }
+.competition-feedback-rail.combo { color: #70f8ff; border-color: #42e9ff; }
+.competition-feedback-rail.ko { color: #fff; border-color: #ff4fb6; font-size: 28px; }
+
+.competition-global-alert {
+  position: fixed;
+  z-index: 999;
+  top: 14%;
+  left: 50%;
+  padding: 10px 24px;
+  border: 2px solid var(--pink);
+  color: #fff;
+  background: #110922ee;
+  font: 30px 'Black Ops One', sans-serif;
+  letter-spacing: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -30px) scale(.85);
+}
+
+.competition-global-alert.show {
+  animation: competition-global-alert 1.45s ease-out;
+}
+
+.player-card.competition-received {
+  animation: competition-hit .55s ease-out;
+}
+
+.player-card.competition-combo .board-wrap {
+  animation: competition-combo-glow .75s ease-out;
+}
+
+.player-card.competition-ko {
+  animation: competition-ko 1.2s ease-out;
+}
+
+@keyframes competition-countdown-pop {
+  0% { opacity: 0; transform: scale(1.8); }
+  45% { opacity: 1; transform: scale(.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes competition-toast {
+  0% { opacity: 0; transform: translateY(-6px) scale(.92); }
+  22%, 70% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(5px) scale(1.03); }
+}
+
+@keyframes competition-global-alert {
+  0% { opacity: 0; transform: translate(-50%, -30px) scale(.7); }
+  18%, 72% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, 20px) scale(1.15); }
+}
+
+@keyframes competition-hit {
+  0%, 100% { transform: translateX(0); filter: none; }
+  15% { transform: translateX(-12px); filter: saturate(2) brightness(1.35); }
+  32% { transform: translateX(11px); }
+  50% { transform: translateX(-7px); }
+  70% { transform: translateX(5px); }
+}
+
+@keyframes competition-combo-glow {
+  0%, 100% { box-shadow: inset 0 0 0 3px #5e6d89, 0 9px 0 #0008, 0 16px 28px #0008; }
+  45% { box-shadow: inset 0 0 0 4px #fff, 0 0 30px #42e9ff, 0 0 55px #ff4fb6; }
+}
+
+@keyframes competition-ko {
+  0%, 100% { filter: none; transform: scale(1); }
+  20% { filter: brightness(2.4) saturate(2); transform: scale(1.025) rotate(-1deg); }
+  40% { filter: contrast(1.7) hue-rotate(70deg); transform: scale(.98) rotate(1deg); }
+  62% { filter: brightness(2) saturate(3); transform: scale(1.02); }
+}
+
+@media (max-width: 740px) {
+  .competition-records-bar,
+  .competition-records {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .competition-countdown strong {
+    min-width: 220px;
+    font-size: 96px;
+  }
+
+  .competition-feedback-rail {
+    min-width: 105px;
+    padding: 6px;
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .competition-countdown strong,
+  .competition-feedback-rail.show,
+  .competition-global-alert.show,
+  .player-card.competition-received,
+  .player-card.competition-combo .board-wrap,
+  .player-card.competition-ko {
+    animation-duration: .01ms;
+    animation-iteration-count: 1;
+  }
+}
