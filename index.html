@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101735" />
+  <title>Block Clash · B5</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header><div><p class="eyebrow">ORIGINAL BLOCK DUEL</p><h1>BLOCK <span>CLASH</span></h1></div><div class="legend">消行攻擊 · 最後存活者獲勝</div></header>
+    <section class="hud"><div><small>模式</small><strong id="modeName">單人練習</strong></div><div><small>時間</small><strong id="timer">02:00</strong></div><label class="map-picker"><small>地圖</small><select id="mapSelect"><option value="classic">經典競技場</option><option value="canyon">峽谷缺口</option><option value="steps">階梯攻防</option><option value="split">雙塔迷陣</option></select></label><button id="newGame">開始遊戲</button><button id="modeButton" class="secondary">切換雙人</button></section>
+    <section class="arena">
+      <article class="player-card p1"><div class="player-title"><span><i></i> 玩家 1</span><b id="p1Score">000000</b></div><div class="preview"><span>下一個</span><canvas id="next1" width="120" height="90" aria-label="玩家一下一個方塊"></canvas></div><div class="board-wrap"><canvas id="board1" width="300" height="600" tabindex="0" aria-label="玩家一遊戲區"></canvas><div id="p1Cover" class="cover">雙人模式開啟</div></div><div class="stats"><span>KO <b id="p1Ko">0</b></span><span>送出 <b id="p1Sent">0</b></span><span>連擊 <b id="p1Combo">0</b></span><span>待收 <b id="p1Pending">0</b></span></div><div class="keys">← → 移動 · ↑ 旋轉 · ↓ 加速 · 空白鍵直落</div></article>
+      <div class="versus"><span>VS</span><small>HOLD FAST</small></div>
+      <article class="player-card p2" id="player2"><div class="player-title"><span><i></i> 玩家 2</span><b id="p2Score">000000</b></div><div class="preview"><span>下一個</span><canvas id="next2" width="120" height="90" aria-label="玩家二下一個方塊"></canvas></div><div class="board-wrap"><canvas id="board2" width="300" height="600" aria-label="玩家二遊戲區"></canvas><div id="p2Cover" class="cover">按開始鍵</div></div><div class="stats"><span>KO <b id="p2Ko">0</b></span><span>送出 <b id="p2Sent">0</b></span><span>連擊 <b id="p2Combo">0</b></span><span>待收 <b id="p2Pending">0</b></span></div><div class="keys">A D 移動 · W 旋轉 · S 加速 · Shift 直落</div></article>
+    </section>
+    <section id="message" class="message" aria-live="polite"><h2>準備好了嗎？</h2><p>按 Enter 開始單人練習</p></section>
+    <section class="touch-controls" aria-label="玩家一操作按鈕"><button data-action="left">←</button><button data-action="spin">↻</button><button data-action="right">→</button><button data-action="down">↓</button><button class="drop" data-action="drop">直落</button></section>
+    <footer><span id="inputStatus">B5：正在確認 JavaScript…</span>　·　Enter 開始／暫停　·　R 重新開始</footer>
+  </main>
+  <script>
+    document.getElementById('inputStatus').textContent = 'B5：JavaScript 已啟動，正在載入遊戲…';
+    window.addEventListener('error', function (event) {
+      var status = document.getElementById('inputStatus');
+      if (status) status.textContent = '遊戲載入錯誤：' + event.message;
+    }, true);
+  </script>
+  <script>
+  try {
+  const C=10,R=20,SHAPES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]],COLORS=['#35dff6','#f6d44a','#ba70ff','#3c72ff','#ff9c47','#54df80','#ff4f80'];
+  let two=false,running=false,paused=false,last=0,elapsed=0,clock=120,players=[],loopId=null;
+  function matrix(){return Array.from({length:R},()=>Array(C).fill(0))}function piece(){let n=Math.floor(Math.random()*SHAPES.length);return{m:SHAPES[n].map(r=>r.slice()),x:Math.floor((C-SHAPES[n][0].length)/2),y:0,n}}
+  function applyMap(p){let map=document.getElementById('mapSelect').value,put=(y,x)=>{if(y>=0&&y<R&&x>=0&&x<C)p.board[y][x]=7};if(map==='canyon'){for(let y=17;y<R;y++)for(let x=0;x<C;x++)if(x<3||x>6)put(y,x)}if(map==='steps'){for(let i=0;i<4;i++)for(let y=19-i;y<R;y++)put(y,p.id===1?i:9-i)}if(map==='split'){for(let y=16;y<R;y++){put(y,2);put(y,7)}for(let x=0;x<C;x+=3)put(19,x)}}
+  function newPlayer(id){let current=piece();return{ id,ctx:document.getElementById('board'+id).getContext('2d'),nextCtx:document.getElementById('next'+id).getContext('2d'),board:matrix(),p:current,next:piece(),score:0,lines:0,attack:0,linesSent:0,ko:0,pending:0,combo:-1,level:1,dead:false,fall:0}}
+  function collide(p,m=p.p.m,ox=p.p.x,oy=p.p.y){return m.some((r,y)=>r.some((v,x)=>v&&(oy+y>=R||ox+x<0||ox+x>=C||p.board[oy+y][ox+x]))) }
+  function rotate(m){return m[0].map((_,i)=>m.map(r=>r[i]).reverse())}function lock(p){p.p.m.forEach((r,y)=>r.forEach((v,x)=>{if(v&&p.p.y+y>=0)p.board[p.p.y+y][p.p.x+x]=p.p.n+1}));let lines=0;p.board=p.board.filter(r=>{if(r.every(Boolean)){lines++;return false}return true});while(p.board.length<R)p.board.unshift(Array(C).fill(0));if(lines){p.lines+=lines;p.score+=[0,100,300,500,800][lines]*p.level;p.combo++;let attack=[0,0,1,2,4][lines]+(p.combo>0?1:0),cancel=Math.min(p.pending,attack);p.pending-=cancel;attack-=cancel;p.attack+=attack;if(two&&attack){let target=players.find(q=>q!==p);target.pending+=attack;p.linesSent+=attack}}else p.combo=-1;if(p.pending){addGarbage(p,p.pending);p.pending=0}p.level=1+Math.floor(p.lines/10);p.p=p.next;p.next=piece();if(collide(p)){if(two)knockOut(p);else{p.dead=true;finish(p)}}}
+  function addGarbage(p,n){if(!p||p.dead)return;for(let i=0;i<n;i++){p.board.shift();let row=Array(C).fill(7);row[Math.floor(Math.random()*C)]=0;p.board.push(row)}}
+  function move(p,dx,dy){if(!p||p.dead)return false;p.p.x+=dx;p.p.y+=dy;if(collide(p)){p.p.x-=dx;p.p.y-=dy;if(dy)lock(p);return false}return true}function spin(p){if(!p||p.dead)return;let old=p.p.m;p.p.m=rotate(old);if(collide(p)){p.p.x++;if(collide(p)){p.p.x-=2;if(collide(p)){p.p.x++;p.p.m=old}}}}
+  function drop(p){if(!p||p.dead)return;let d=0;while(move(p,0,1))d++;p.score+=d*2}function draw(p){let x=p.ctx;x.fillStyle='#060b1b';x.fillRect(0,0,300,600);for(let y=0;y<R;y++)for(let q=0;q<C;q++){let v=p.board[y][q];cell(x,q,y,v?COLORS[v-1]:'#0b1230')}if(!p.dead){let gy=p.p.y;while(!collide(p,p.p.m,p.p.x,gy+1))gy++;if(gy!==p.p.y){x.save();x.globalAlpha=.22;p.p.m.forEach((r,y)=>r.forEach((v,q)=>v&&cell(x,p.p.x+q,gy+y,COLORS[p.p.n])));x.restore()}p.p.m.forEach((r,y)=>r.forEach((v,q)=>v&&cell(x,p.p.x+q,p.p.y+y,COLORS[p.p.n])))}drawNext(p);document.getElementById('p'+p.id+'Score').textContent=String(p.score).padStart(6,'0');document.getElementById('p'+p.id+'Ko').textContent=p.ko;document.getElementById('p'+p.id+'Sent').textContent=p.linesSent;document.getElementById('p'+p.id+'Combo').textContent=Math.max(0,p.combo);document.getElementById('p'+p.id+'Pending').textContent=p.pending}
+  function drawNext(p){let x=p.nextCtx,m=p.next.m,w=m[0].length,h=m.length,s=20;x.fillStyle='#0a112a';x.fillRect(0,0,120,90);let ox=(120-w*s)/2,oy=(90-h*s)/2;m.forEach((r,y)=>r.forEach((v,q)=>{if(v){x.fillStyle=COLORS[p.next.n];x.fillRect(ox+q*s+1,oy+y*s+1,s-2,s-2);x.fillStyle='#ffffff38';x.fillRect(ox+q*s+4,oy+y*s+4,s-8,3)}}))}
+  function cell(x,a,b,color){x.fillStyle=color;x.fillRect(a*30+1,b*30+1,28,28);if(color!=='#0b1230'){x.fillStyle='#ffffff38';x.fillRect(a*30+4,b*30+4,20,4)}}
+  function tick(){if(!running||paused)return;let now=Date.now(),dt=now-last;last=now;elapsed+=dt;clock=Math.max(0,120-Math.floor(elapsed/1000));(two?players:[players[1]]).forEach(p=>{p.fall+=dt;if(p.fall>Math.max(100,700-(p.level-1)*55)){move(p,0,1);p.fall=0}draw(p)});document.getElementById('timer').textContent=`${String(Math.floor(clock/60)).padStart(2,'0')}:${String(clock%60).padStart(2,'0')}`;if(!clock)finish()}
+  function stackHeight(p){for(let y=0;y<R;y++)if(p.board[y].some(Boolean))return R-y;return 0}function knockOut(loser){let winner=players.find(p=>p!==loser);winner.ko++;if(winner.ko>=2){finish(loser);return}let keepKo=loser.ko;Object.assign(loser,newPlayer(loser.id));loser.ko=keepKo;show(`玩家 ${winner.id} KO！`,`比分 ${players[0].ko} : ${players[1].ko}`)}function finish(loser){if(!running)return;running=false;if(loopId){clearInterval(loopId);loopId=null}let title;if(loser)title=two?`玩家 ${loser.id===1?2:1} 獲勝！`:'遊戲結束';else if(two){let a=players[0],b=players[1],winner=a.ko!==b.ko?(a.ko>b.ko?a:b):a.linesSent!==b.linesSent?(a.linesSent>b.linesSent?a:b):stackHeight(a)!==stackHeight(b)?(stackHeight(a)<stackHeight(b)?a:b):null;title=winner?`時間到，玩家 ${winner.id} 獲勝！`:'時間到，平手！'}else title='時間到！';show(title,'按 Enter 再玩一場')}
+  function show(h,p){let e=document.getElementById('message');e.innerHTML=`<h2>${h}</h2><p>${p}</p>`}function setMode(){two=!two;document.getElementById('modeButton').textContent=two?'切換單人':'切換雙人';start()}document.getElementById('newGame').onclick=start;document.getElementById('modeButton').onclick=setMode;
+  const gameKeys=new Set(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp','Space','KeyA','KeyD','KeyS','KeyW','ShiftLeft','Enter','KeyR']);
+  function status(text){document.getElementById('inputStatus').textContent=text}function action(name,p=two?players[0]:players[1]){if(!p||p.dead)return;({left:()=>move(p,-1,0),right:()=>move(p,1,0),down:()=>move(p,0,1),spin:()=>spin(p),drop:()=>drop(p)})[name]?.();draw(p);status(`已接收操作：${name}`)}
+  function gameInput(e){if(e.__blockClashHandled)return;e.__blockClashHandled=true;let code=e.code||'',key=e.key||'';let normalized={a:'KeyA',A:'KeyA',d:'KeyD',D:'KeyD',s:'KeyS',S:'KeyS',w:'KeyW',W:'KeyW',' ':'Space',Shift:'ShiftLeft',r:'KeyR',R:'KeyR',Enter:'Enter'}[key]||key||code;if(gameKeys.has(code)||gameKeys.has(normalized))e.preventDefault();let command=code||normalized;if(command==='Enter'||normalized==='Enter'){if(!running)start();else{paused=!paused;last=Date.now();show(paused?'已暫停':'繼續遊戲','按 Enter 切換暫停')}return}if(command==='KeyR'||normalized==='KeyR'){start();return}if(!running||paused)return;let p1=two?players[0]:players[1],p2=players[1];let map={ArrowLeft:['left',p1],ArrowRight:['right',p1],ArrowDown:['down',p1],ArrowUp:['spin',p1],Space:['drop',p1],KeyA:['left',p2],KeyD:['right',p2],KeyS:['down',p2],KeyW:['spin',p2],ShiftLeft:['drop',p2]};let picked=map[command]||map[normalized];if(picked)action(picked[0],picked[1])}
+  window.addEventListener('keydown',gameInput,true);document.addEventListener('keydown',gameInput,true);document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{if(!running)start();action(b.dataset.action)}));
+  function start(){if(loopId)clearInterval(loopId);players=[newPlayer(1),newPlayer(2)];players.forEach(applyMap);running=true;paused=false;elapsed=0;clock=120;last=Date.now();document.getElementById('p1Cover').classList.toggle('hidden',two);document.getElementById('p2Cover').classList.add('hidden');document.getElementById('modeName').textContent=two?'本機雙人對戰':'右側單人練習';try{document.getElementById('board2').focus({preventScroll:true})}catch(_){document.getElementById('board2').focus()}players.forEach(draw);let mapName=document.getElementById('mapSelect').selectedOptions[0].text;show(two?'雙人對戰開始！':'右側單人練習開始！',`地圖：${mapName}`);status('B5：遊戲引擎運行中');loopId=setInterval(tick,33)}
+  players=[newPlayer(1),newPlayer(2)];players.forEach(draw);status('B5：準備就緒，按「開始遊戲」或 Enter');
+  } catch (error) { document.getElementById('inputStatus').textContent='B5：遊戲錯誤：'+error.message; }
+  </script>
+</body>
+</html>
