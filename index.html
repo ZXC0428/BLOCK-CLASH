@@ -2,17 +2,17 @@
 <html lang="zh-Hant">
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>BLOCK CLASH</title><link rel="stylesheet" href="style.css" /></head>
 <body><main class="app">
-  <header><div><p class="eyebrow">ORIGINAL BLOCK DUEL</p><h1>BLOCK <span>CLASH</span></h1></div><button id="versusButton" class="secondary">雙人對戰</button></header>
+  <header><div><p class="eyebrow">ORIGINAL BLOCK DUEL</p><h1>BLOCK <span>CLASH</span></h1></div><div class="mode-actions"><button id="soloButton" class="secondary">單人模式</button><button id="versusButton" class="secondary">雙人對戰</button></div></header>
   <section id="soloLobby" class="solo-lobby">
     <div class="lobby-heading"><div><p class="eyebrow">SINGLE PLAYER</p><h2>單人挑戰</h2></div><button id="closeLobby" class="secondary">回到遊戲</button></div>
     <div class="quick-modes"><button data-quick="sprint"><b>60</b><span>秒極限</span><small>在 60 秒內消除最多行</small></button><button data-quick="score"><b>120</b><span>兩分鐘衝分</span><small>在 120 秒內取得最高分</small></button><button data-quick="endless"><b>∞</b><span>無盡生存</span><small>直到方塊堆滿為止</small></button></div>
     <div class="level-heading"><h3>關卡選擇</h3><span id="progressSummary">讀取進度中…</span></div><div id="levelGrid" class="level-grid" aria-label="關卡選擇"></div>
   </section>
-  <section class="hud"><div><small id="modeLabel">遊戲模式</small><strong id="modeName">單人練習</strong></div><div><small id="objectiveLabel">目標</small><strong id="objective">消除 20 行</strong></div><div><small>時間</small><strong id="timer">∞</strong></div><button id="newGame">重新開始</button><button id="soloButton" class="secondary">單人模式</button></section>
+  <section class="hud"><div><small id="modeLabel">遊戲模式</small><strong id="modeName">單人練習</strong></div><div><small id="objectiveLabel">目標</small><strong id="objective">消除 20 行</strong></div><div><small>時間</small><strong id="timer">∞</strong></div><button id="newGame">重新開始</button></section>
   <section class="arena">
     <article id="leftPlayer" class="player-card p1 hidden-player"><div class="player-title"><span>P2 玩家</span><b id="p1Score">000000</b></div><div class="board-wrap"><canvas id="board1" width="300" height="600"></canvas><div id="p1Cover" class="cover">等待雙人對戰</div></div><div class="stats"><span>KO <b id="p1Ko">0</b></span><span>LINES <b id="p1Lines">0</b></span><span>SENT <b id="p1Sent">0</b></span></div><p class="keys">A / D 移動 · W 旋轉 · S 下移 · Shift 落下</p></article>
     <div id="versus" class="versus hidden-player"><span>VS</span><small>BLOCK CLASH</small></div>
-    <article class="player-card p2"><div class="player-title"><span>P1 玩家</span><b id="p2Score">000000</b></div><div class="board-wrap"><canvas id="board2" width="300" height="600" tabindex="0"></canvas><div id="p2Cover" class="cover">按 Enter 開始</div></div><div class="stats"><span>KO <b id="p2Ko">0</b></span><span>LINES <b id="p2Lines">0</b></span><span>SENT <b id="p2Sent">0</b></span></div><p class="keys">← / → 移動 · ↑ 旋轉 · ↓ 下移 · 單人空白鍵快速落下</p></article>
+    <article class="player-card p2"><div class="player-title"><span>P1 玩家</span><b id="p2Score">000000</b></div><div class="board-wrap"><canvas id="board2" width="300" height="600" tabindex="0"></canvas><div id="p2Cover" class="cover">按 Enter 開始</div></div><div class="stats"><span>KO <b id="p2Ko">0</b></span><span>LINES <b id="p2Lines">0</b></span><span>SENT <b id="p2Sent">0</b></span></div><p class="keys">淡色方塊為落點預覽 · 單人空白鍵快速落下</p></article>
   </section>
   <section id="message" class="message" aria-live="polite"><h2>準備好了嗎？</h2><p>選擇單人模式，或按 Enter 開始練習。</p></section><section class="touch-controls" aria-label="操作按鈕"><button data-action="left">←</button><button data-action="spin">↻</button><button data-action="right">→</button><button data-action="down">↓</button><button class="drop" data-action="drop">落下</button></section><footer id="inputStatus">SQLite 進度系統就緒</footer>
 </main><script src="game.js"></script></body></html>
